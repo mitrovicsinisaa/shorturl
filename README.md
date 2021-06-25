@@ -11,7 +11,7 @@ KIND. KIND will set up your cluster there and deploying and running the project 
 
 [Install the Kustomize client](https://kubernetes-sigs.github.io/kustomize/installation/).
 
-## running project
+## Running project
 
 Build docker container.
 
