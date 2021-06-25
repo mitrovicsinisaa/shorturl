@@ -74,15 +74,13 @@ func (su Shorturl) Delete(ctx context.Context, traceID string, claims auth.Claim
 	DELETE FROM
 		shorturls
 	WHERE
-		shorturl_id = $1`
-
-	shorturlID := 1
+		shorturl_id = $1;`
 
 	su.log.Printf("%s : %s : query : %s", traceID, "shorturl.Delete",
 		database.Log(q, shorturl_id))
 
-	if _, err := su.db.ExecContext(ctx, q, shorturlID); err != nil {
-		return errors.Wrapf(err, "deleting shorturl %s", shorturl_id)
+	if _, err := su.db.ExecContext(ctx, q, shorturl_id); err != nil {
+		return errors.Wrapf(err, "deleting shorturl %d", shorturl_id)
 	}
 
 	return nil
@@ -124,7 +122,7 @@ func (su Shorturl) QueryByID(ctx context.Context, traceID string, shorturl_id in
 		visits = visits + 1
 	WHERE
 		shorturl_id = $1
-		RETURNING URL`
+		RETURNING url`
 
 	su.log.Printf("%s : %s : query : %s", traceID, "shorturl.QueryByID",
 		database.Log(q, shorturl_id))
