@@ -64,7 +64,7 @@ runadmin:
 	go run app/admin/main.go
 
 test: 
-	go test -v ./... -count=1
+	go test ./... -count=1
 
 tidy: 
 	go mod tidy

@@ -41,7 +41,7 @@ func TestUsers(t *testing.T) {
 
 // getToken401 ensures an unknown user can't generate a token.
 func (ut *UserTests) getToken401(t *testing.T) {
-	r := httptest.NewRequest(http.MethodGet, "/api/users/token", nil)
+	r := httptest.NewRequest(http.MethodGet, "/api/token/"+ut.kid, nil)
 	w := httptest.NewRecorder()
 
 	r.SetBasicAuth("unknown@example.com", "some-password")
@@ -61,7 +61,7 @@ func (ut *UserTests) getToken401(t *testing.T) {
 }
 
 func (ut *UserTests) getToken200(t *testing.T) {
-	r := httptest.NewRequest(http.MethodGet, "/api/users/token/"+ut.kid, nil)
+	r := httptest.NewRequest(http.MethodGet, "/api/token/"+ut.kid, nil)
 	w := httptest.NewRecorder()
 
 	r.SetBasicAuth("admin@example.com", "gophers")
@@ -84,8 +84,6 @@ func (ut *UserTests) getToken200(t *testing.T) {
 				t.Fatalf("\t%s\tTest %d:\tShould be able to unmarshal the response : %v", tests.Failed, testID, err)
 			}
 			t.Logf("\t%s\tTest %d:\tShould be able to unmarshal the response.", tests.Success, testID)
-
-			// TODO(jlw) Should we ensure the token is valid?
 		}
 	}
 }
