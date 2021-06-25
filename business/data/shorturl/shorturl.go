@@ -118,12 +118,13 @@ func (su Shorturl) Query(ctx context.Context, traceID string, pageNumber int, ro
 func (su Shorturl) QueryByID(ctx context.Context, traceID string, shorturl_id int) (Info, error) {
 
 	const q = `
-	SELECT
-		*
-	FROM
+	UPDATE
 		shorturls
-	WHERE 
-		shorturl_id = $1`
+	SET 
+		visits = visits + 1
+	WHERE
+		shorturl_id = $1
+		RETURNING URL`
 
 	su.log.Printf("%s : %s : query : %s", traceID, "shorturl.QueryByID",
 		database.Log(q, shorturl_id))
@@ -134,21 +135,6 @@ func (su Shorturl) QueryByID(ctx context.Context, traceID string, shorturl_id in
 			return Info{}, ErrNotFound
 		}
 		return Info{}, errors.Wrapf(err, "selecting shorturl %q", shorturl_id)
-	}
-
-	const uq = `
-	UPDATE
-		shorturls
-	SET 
-		"visits" = $2
-	WHERE
-		shorturl_id = $1`
-
-	su.log.Printf("%s : %s : query : %s", traceID, "shorturl.QueryByID",
-		database.Log(uq, shorturl_id, shorturl.Visits+1))
-
-	if _, err := su.db.ExecContext(ctx, uq, shorturl_id, shorturl.Visits+1); err != nil {
-		return Info{}, errors.Wrapf(err, "updating visits shorturl %q", shorturl_id)
 	}
 
 	return shorturl, nil
