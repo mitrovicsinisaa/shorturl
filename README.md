@@ -19,7 +19,7 @@ Build docker container.
 $ make shorturl-api
 ```
 
-Create cluster `shorturl-cluster`.
+Create cluster.
 
 ```
 $ make kind-up
@@ -33,7 +33,7 @@ $ make kind-down
 
 ```
 
-Loads the `shorturl-api` container into the k8s environment.
+Load the `shorturl-api` container into the k8s environment.
 
 ```
 $ make kind-load
@@ -45,7 +45,7 @@ Deploys PODs into the cluster.
 $ make kind-services
 ```
 
-Status of cluster.
+Monitor status of cluster.
 
 ```
 $ make kind-status
@@ -53,7 +53,7 @@ $ make kind-status
 
 ### Seed Database
 
-After shorturl-pod status is Running, we can seed the DataBase.
+After _shorturl-pod_ status is Running, we can seed the DataBase.
 To seed user data to DataBase, and create table for short urls run command:
 
 ```
@@ -62,7 +62,7 @@ make runadmin
 
 ### Requests
 
-Protected API endpoints require token.
+Protected API endpoints require token. To obtain token run following command:
 
 ```
 $ curl --user "admin@example.com:gophers" http://localhost:3000/api/token/01aad0ee-cee2-11eb-b8bc-0242ac130003
