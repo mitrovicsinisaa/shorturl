@@ -36,9 +36,8 @@ func TestShorturl(t *testing.T) {
 	}
 
 	t.Run("postShorturl400", tests.postShorturl400)
-	// t.Run("postUser401", tests.postUser401)
-	// t.Run("postUser403", tests.postUser403)
-	// t.Run("getUser400", tests.getUser400)
+	t.Run("getShorturl404", tests.getShorturl404)
+
 	// t.Run("getUser403", tests.getUser403)
 	// t.Run("getUser404", tests.getUser404)
 	// t.Run("deleteUserNotFound", tests.deleteUserNotFound)
@@ -46,7 +45,7 @@ func TestShorturl(t *testing.T) {
 	// t.Run("crudUsers", tests.crudUser)
 }
 
-// postShorturl400 validates a user can't be created with the endpoint
+// postShorturl400 validates a shorturl can't be created with the endpoint
 // unless a valid user document is submitted.
 func (st *ShorturlTests) postShorturl400(t *testing.T) {
 	body, err := json.Marshal(&shorturl.NewShorturl{})
@@ -57,7 +56,6 @@ func (st *ShorturlTests) postShorturl400(t *testing.T) {
 	r := httptest.NewRequest(http.MethodPost, "/api/shorturl", bytes.NewBuffer(body))
 	w := httptest.NewRecorder()
 
-	r.Header.Set("Authorization", "Bearer "+st.adminToken)
 	st.app.ServeHTTP(w, r)
 
 	t.Log("Given the need to validate a new shorturl can't be created with an invalid document.")
@@ -75,6 +73,28 @@ func (st *ShorturlTests) postShorturl400(t *testing.T) {
 				t.Fatalf("\t%s\tTest %d:\tShould be able to unmarshal the response to an error type : %v", tests.Failed, testID, err)
 			}
 			t.Logf("\t%s\tTest %d:\tShould be able to unmarshal the response to an error type.", tests.Success, testID)
+		}
+	}
+}
+
+// getShorturl404 validates a shorturl request for a malformed url.
+func (st *ShorturlTests) getShorturl404(t *testing.T) {
+	url := "owna"
+
+	r := httptest.NewRequest(http.MethodGet, "/"+url, nil)
+	w := httptest.NewRecorder()
+
+	st.app.ServeHTTP(w, r)
+
+	t.Log("Given the need to validate getting a shorturl with a malformed url.")
+	{
+		testID := 0
+		t.Logf("\tTest %d:\tWhen using the new shorturl %s.", testID, url)
+		{
+			if w.Code != http.StatusNotFound {
+				t.Fatalf("\t%s\tTest %d:\tShould receive a status code of 404 for the response : %v", tests.Failed, testID, w.Code)
+			}
+			t.Logf("\t%s\tTest %d:\tShould receive a status code of 404 for the response.", tests.Success, testID)
 		}
 	}
 }
