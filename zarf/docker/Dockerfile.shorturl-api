@@ -1,0 +1,40 @@
+# Build the Go binary. 
+FROM golang:1.16.5 as build_shorturl-api
+ENV CGO_ENABLED 0 
+ARG VCS_REF
+
+# Create a location in the container for the source code.
+# Using the default GOPATH location.
+RUN mkdir -p /shorturl
+
+# Copy the module files first and then download the dependencies.
+# If this doesn't change, we won't need to do this again in future builds.
+# COPY go.* /shorturl/
+# WORKDIR /shorturl
+# RUN go mod download
+
+# Copy the source code into container.
+WORKDIR /shorturl
+COPY . . 
+
+
+# Build the shorturl binary. We are doing this last since this will be different
+# every time we run through this process.
+WORKDIR /shorturl/app/shorturl-api 
+RUN go build -ldflags "-X main.build=${VCS_REF}"
+
+# Run the Go binary in the Apline.
+FROM alpine:3.13
+ARG BUILD_DATE
+ARG VCS_REF
+COPY --from=build_shorturl-api /shorturl/private.pem /shorturl/private.pem
+COPY --from=build_shorturl-api /shorturl/app/shorturl-api/shorturl-api /shorturl/shorturl-api
+WORKDIR /shorturl
+CMD ["./shorturl-api"]
+
+LABEL org.opencontainers.image.created="${BUILD_DATE}" \
+    org.opencontainers.image.title="shorturl-api" \
+    org.opencontainers.image.authors="Sinisa Mitrovic <mitrovic.sinisaa@gmail.com>" \
+    org.opencontainers.image.source="https://github.com/mitrovicsinisaa/shorturl/app/shorturl-api" \
+    org.opencontainers.image.revision="${VCS_REF}" \
+    org.opencontainers.image.vendor="SHORTURL API" 
