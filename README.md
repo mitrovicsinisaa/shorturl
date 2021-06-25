@@ -53,7 +53,7 @@ $ make kind-status
 
 ### Seed Database
 
-After _shorturl-pod_ status is Running, we can seed the DataBase.
+After _shorturl-pod_ and _postgres_ status is Running, we can seed the DataBase.
 To seed user data to DataBase, and create table for short urls run command:
 
 ```
