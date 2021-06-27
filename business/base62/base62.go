@@ -16,6 +16,9 @@ func Encode(number int) string {
 	var eb strings.Builder
 	eb.Grow(11)
 
+	// Increase base number to get string with multiple characters
+	number = number + 1000000
+
 	for ; number > 0; number = number / length {
 		eb.WriteByte(base[(number % length)])
 	}
@@ -34,6 +37,9 @@ func Decode(encoded string) (int, error) {
 		}
 		number += int(bp) * int(math.Pow(float64(length), float64(i)))
 	}
+
+	// Decrease base number to get string with multiple characters
+	number = number - 1000000
 
 	return number, nil
 }
